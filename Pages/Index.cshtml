@@ -19,12 +19,23 @@
   <div>
     @if (ViewData["Entries"] is List<(string Title, string Url)> entries)
     {
-      <ul>
-        @foreach (var entry in entries)
-        {
-          <li><a href="@entry.Url" target="_blank">@entry.Title</a></li>
-        }
-      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach (var entry in entries)
+          {
+            <tr>
+              <td><a href="@entry.Url" target="_blank">@entry.Title</a></td>
+              <td><button type="button" class="outline" data-action="copy" data-url="@entry.Url">copy</button></td>
+            </tr>
+          }
+        </tbody>
+      </table>
     }
     <div>
       <a href="@ViewData["SavedUrl"]" target="_blank">RSS Feed Link</a>

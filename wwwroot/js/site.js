@@ -1,4 +1,15 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
+﻿document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll('[data-action="copy"]').forEach((button) => {
+    button.addEventListener("click", async function () {
+      const url = this.dataset.url;
+      if (url) {
+        try {
+          await navigator.clipboard.writeText(url);
+          console.log("URL copied to clipboard:", url);
+        } catch (err) {
+          console.error("Failed to copy URL:", err);
+        }
+      }
+    });
+  });
+});
