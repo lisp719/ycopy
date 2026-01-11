@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Net.Http;
+using System.Xml.Linq;
 
 namespace ycopy.Pages;
 
@@ -13,10 +15,15 @@ public class IndexModel : PageModel
         _logger = logger;
     }
 
-    public void OnGet()
+    public async Task OnGetAsync()
     {
         var savedUrl = Request.Cookies["SavedUrl"];
         ViewData["SavedUrl"] = savedUrl;
+
+        if (!string.IsNullOrEmpty(savedUrl))
+        {
+            ViewData["Entries"] = await GetFeedEntriesAsync(savedUrl);
+        }
     }
 
     public IActionResult OnPost()
@@ -32,6 +39,27 @@ public class IndexModel : PageModel
             });
         }
         return RedirectToPage();
+    }
+
+    private async Task<List<(string Title, string Url)>> GetFeedEntriesAsync(string url)
+    {
+        try
+        {
+            using var client = new HttpClient();
+
+            var response = await client.GetStringAsync(url);
+            var doc = XDocument.Parse(response);
+            var entries = doc.Descendants(XName.Get("entry", "http://www.w3.org/2005/Atom"));
+
+            return entries.Select(e => (
+                Title: e.Element(XName.Get("title", "http://www.w3.org/2005/Atom"))?.Value ?? "タイトルなし",
+                Url: e.Element(XName.Get("link", "http://www.w3.org/2005/Atom"))?.Attribute("href")?.Value ?? "#"
+            )).ToList();
+        }
+        catch
+        {
+            return new List<(string Title, string Url)> { ("フィード取得エラー", "#") };
+        }
     }
 
     private string ConvertToRssUrl(string url)

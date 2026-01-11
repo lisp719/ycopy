@@ -17,6 +17,17 @@
 @if (ViewData["SavedUrl"] != null)
 {
   <div>
-    <a href="@ViewData["SavedUrl"]" target="_blank">RSS Feed Link</a>
+    @if (ViewData["Entries"] is List<(string Title, string Url)> entries)
+    {
+      <ul>
+        @foreach (var entry in entries)
+        {
+          <li><a href="@entry.Url" target="_blank">@entry.Title</a></li>
+        }
+      </ul>
+    }
+    <div>
+      <a href="@ViewData["SavedUrl"]" target="_blank">RSS Feed Link</a>
+    </div>
   </div>
 }
