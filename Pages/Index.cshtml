@@ -17,6 +17,9 @@
 @if (ViewData["SavedUrl"] != null)
 {
   <div>
+    <div>
+      <a href="@ViewData["SavedUrl"]" target="_blank">Playlist Link</a>
+    </div>
     @if (ViewData["Entries"] is List<(string Title, string Url)> entries)
     {
       <table>
@@ -37,8 +40,5 @@
         </tbody>
       </table>
     }
-    <div>
-      <a href="@ViewData["SavedUrl"]" target="_blank">RSS Feed Link</a>
-    </div>
   </div>
 }

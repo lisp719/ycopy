@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using System.Net.Http;
+
 using System.Xml.Linq;
 
 namespace ycopy.Pages;
@@ -18,22 +18,23 @@ public class IndexModel : PageModel
     public async Task OnGetAsync()
     {
         var savedUrl = Request.Cookies["SavedUrl"];
+        var rssUrl = ConvertToRssUrl(savedUrl ?? "");
+
         ViewData["SavedUrl"] = savedUrl;
 
-        if (!string.IsNullOrEmpty(savedUrl))
+        if (!string.IsNullOrEmpty(rssUrl))
         {
-            ViewData["Entries"] = await GetFeedEntriesAsync(savedUrl);
+            ViewData["Entries"] = await GetFeedEntriesAsync(rssUrl);
         }
     }
 
     public IActionResult OnPost()
     {
         var url = Request.Form["url"].ToString();
-        var rssUrl = ConvertToRssUrl(url);
 
-        if (!string.IsNullOrEmpty(url) && !string.IsNullOrEmpty(rssUrl))
+        if (!string.IsNullOrEmpty(url))
         {
-            Response.Cookies.Append("SavedUrl", rssUrl, new CookieOptions
+            Response.Cookies.Append("SavedUrl", url, new CookieOptions
             {
                 MaxAge = TimeSpan.MaxValue
             });
