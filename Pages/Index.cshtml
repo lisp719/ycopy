@@ -16,5 +16,7 @@
 
 @if (ViewData["SavedUrl"] != null)
 {
-  <p>保存されたURL: @ViewData["SavedUrl"]</p>
+  <div>
+    <a href="@ViewData["SavedUrl"]" target="_blank">RSS Feed Link</a>
+  </div>
 }
